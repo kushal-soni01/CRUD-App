@@ -1,15 +1,2 @@
-pylance
 flask
-flask-wtf
-flask-login
-flask-migrate
-sqlalchemy
-flask-bcrypt
-flask-restful
-flask-jwt-extended
-
-django
-djangorestframework
-django-environ
-djangorestframework-simplejwt
-django-filter
+flask-sqlalchemy
