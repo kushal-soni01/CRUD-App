@@ -1,21 +1,29 @@
+import os
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///employees.db" #Tells flask to create a database employees.db
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False #Tells flask not to track modifications of objects and emit signals
 
-app.secret_key = "Secret Key"
+# Use in-memory SQLite for Vercel (data resets on each cold start)
+# For persistent data, use a cloud database like PostgreSQL
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+app.secret_key = os.environ.get("SECRET_KEY", "Secret Key")
 
 db = SQLAlchemy(app)
 
-class Employee(db.Model): #Inherits the properties of db.model class
-    id = db.Column(db.Integer, primary_key=True, nullable=False) #Auto-Incrementing primary key
+class Employee(db.Model):
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
     name = db.Column(db.String(100), nullable = False)
     email = db.Column(db.String(100), nullable = False, unique = True)
 
     def __repr__(self):
         return f"Employee Name: {self.name}, Email: {self.email}"
+
+# Create tables within app context
+with app.app_context():
+    db.create_all()
 
 @app.route("/")
 def home():
